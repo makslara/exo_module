@@ -131,7 +131,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Widget buildView(int textureId) {
-    return Texture(textureId: textureId);
+    if (textureId == null) {
+      return Container();
+    }
+    else {
+      return AndroidView(viewType: 'flutter.io/videoPlayer/nativeView$textureId');
+    }
   }
 
   @override
