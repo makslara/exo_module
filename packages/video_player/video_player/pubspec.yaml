@@ -17,7 +17,7 @@ dependencies:
   meta: ^1.0.5
   video_player_platform_interface:
     git:
-      url: git://github.com/alexeylopukh-aloteq/plugins.git
+      url: https://github.com/makslara/fork_for_video_player.git
       path: packages/video_player/video_player_platform_interface
 
   # The design on https://flutter.dev/go/federated-plugins was to leave
