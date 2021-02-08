@@ -29,6 +29,9 @@ import io.flutter.plugins.videoplayer.player_view.VideoPlayerFactory;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -36,9 +39,9 @@ import javax.net.ssl.HttpsURLConnection;
 /** Android platform implementation of the VideoPlayerPlugin. */
 public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
   private static final String TAG = "VideoPlayerPlugin";
-  private final LongSparseArray<VideoPlayer> videoPlayers = new LongSparseArray<>();
+  private final HashMap<Long, VideoPlayer> videoPlayers = new HashMap<>();
   private FlutterState flutterState;
-  private VideoPlayerOptions options = new VideoPlayerOptions();
+  private final VideoPlayerOptions options = new VideoPlayerOptions();
 
   /** Register this with the v2 embedding for the plugin to respond to lifecycle callbacks. */
   public VideoPlayerPlugin() {}
@@ -107,8 +110,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
   }
 
   private void disposeAllPlayers() {
-    for (int i = 0; i < videoPlayers.size(); i++) {
-      videoPlayers.valueAt(i).dispose();
+    for (Map.Entry<Long, VideoPlayer> entry : videoPlayers.entrySet()) {
+      entry.getValue().dispose();
     }
     videoPlayers.clear();
   }
@@ -131,7 +134,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
 //    TextureRegistry.SurfaceTextureEntry handle =
 //        flutterState.textureRegistry.createSurfaceTexture();
     VideoPlayerFactory videoPlayerFactory = new VideoPlayerFactory(exoPlayer,
-            (long) videoPlayers.size());
+            new Date().getTime());
     flutterState.platformViewRegistry.registerViewFactory(
             "flutter.io/videoPlayer/nativeView" + videoPlayerFactory.id,
             videoPlayerFactory);
@@ -236,7 +239,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
     private final BinaryMessenger binaryMessenger;
     private final KeyForAssetFn keyForAsset;
     private final KeyForAssetAndPackageName keyForAssetAndPackageName;
-    private final TextureRegistry textureRegistry;
     private final PlatformViewRegistry platformViewRegistry;
 
     FlutterState(
@@ -250,7 +252,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
       this.binaryMessenger = messenger;
       this.keyForAsset = keyForAsset;
       this.keyForAssetAndPackageName = keyForAssetAndPackageName;
-      this.textureRegistry = textureRegistry;
       this.platformViewRegistry = platformViewRegistry;
     }
 
